@@ -2,8 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define CMDLINE_MAX 512
+
+struct command
+{
+    char** val; 
+};
+
 
 int main(void)
 {
@@ -14,7 +22,7 @@ int main(void)
                 int retval;
 
                 /* Print prompt */
-                printf("sshell$ ");
+                printf("sshell@ucd$ ");
                 fflush(stdout);
 
                 /* Get command line */
@@ -38,8 +46,25 @@ int main(void)
                 }
 
                 /* Regular command */
-                retval = system(cmd);
-                fprintf(stdout, "Return status value for '%s': %d\n",
+                pid_t pid = fork();
+                char *args[] = {cmd, NULL};
+                
+                if (pid == 0) {
+                /* Child */
+                    execvp(cmd,args);
+                    perror("execv");
+                    exit(1);
+                } else if (pid > 0) {
+                /* Parent */
+                    waitpid(pid, &retval, 0);
+                    // printf("Child returned %d\n",
+                    // WEXITSTATUS(status));
+                } else {
+                    perror("fork");
+                    exit(1);
+                }
+                // retval = system(cmd);
+                fprintf(stderr, "+ completed '%s' [%d]\n",
                         cmd, retval);
         }
 
