@@ -7,14 +7,55 @@
 
 #define CMDLINE_MAX 512
 
-struct command
-{
-    char** val; 
+struct myparse{
+    char arg[512];
+    char com[512]; 
 };
 
+void myfunc(struct myparse *par, char command[512]){
+        char *token = strtok(command, " ");
+        int cnt = 0;
+        while (token != NULL)
+        {
+            cnt++;
+            printf("%s\n", token);
+            if (cnt == 1)
+            {
+                strcpy(par->com, token);
+                printf("this is parcom%s\n", par->com);
+            } 
+            if (cnt == 2)
+            {
+                strcpy(par->arg, token);
+            }
+            if (cnt > 2)
+            {
+                strcat(par->arg, " ");
+                strcat(par->arg, token);
+            }
 
-int main(void)
+            token = strtok(NULL, " ");
+        }
+        
+}
+
+void mycd(char argument[512], char comline[512])
 {
+    
+    if (chdir(argument) != 0)
+    {
+        printf("Error: cannot cd into directory\n");
+        printf("+ completed '%s' [1]\n", comline);
+    }
+    else
+    {
+        printf("+ completed '%s' [0]\n", comline);
+    }
+}
+
+int main(void){
+        struct myparse *p1 = (struct myparse *) malloc(sizeof(struct myparse));
+        
         char cmd[CMDLINE_MAX];
 
         while (1) {
@@ -44,14 +85,19 @@ int main(void)
                         fprintf(stderr, "Bye...\n");
                         break;
                 }
-
+                myfunc(p1, cmd);
+                printf("p1com %s\n", p1->com);
+                if (!strcmp(p1->com, "cd")){
+                        mycd(p1->arg, p1->com);
+                        continue;
+                }
                 /* Regular command */
                 pid_t pid = fork();
-                char *args[] = {cmd, NULL};
+                /*char *args[] = {cmd, NULL};*/
                 
                 if (pid == 0) {
                 /* Child */
-                    execvp(cmd,args);
+                    execvp(p1->com,p1->arg);
                     perror("execv");
                     exit(1);
                 } else if (pid > 0) {
