@@ -6,40 +6,50 @@
 #include <sys/wait.h>
 
 #define CMDLINE_MAX 512
+#define ARGS_LIMIT 16
 
 struct myparse{
-    char arg[512];
-    char com[512]; 
+    char **arg;
+    char com[CMDLINE_MAX]; 
+    char dir[CMDLINE_MAX];
+    char firstcmd[CMDLINE_MAX];
 };
 
-void myfunc(struct myparse *par, char command[512]){
+void parser(struct myparse *par, char command[CMDLINE_MAX]){
         char *token = strtok(command, " ");
         int cnt = 0;
         while (token != NULL)
         {
             cnt++;
-            printf("%s\n", token);
+            // printf("%s\n", token);
             if (cnt == 1)
-            {
+            {   
                 strcpy(par->com, token);
-                printf("this is parcom%s\n", par->com);
+                // par->arg[cnt-1] = malloc(CMDLINE_MAX * sizeof(char*));
+                strcpy(par->arg[cnt - 1], token);
+                // printf("this is parcom%s\n", par->com);
+                // printf("this is pararg%s\n", par->arg[cnt - 1]);
             } 
-            if (cnt == 2)
+            // if (cnt == 2)
+            // {
+            //     strcat(par->arg, token);
+            // }
+            if (cnt >= 2)
             {
-                strcpy(par->arg, token);
-            }
-            if (cnt > 2)
-            {
-                strcat(par->arg, " ");
-                strcat(par->arg, token);
+                //strcat(par->arg, " ");
+                // par->arg[cnt-1] = malloc(CMDLINE_MAX * sizeof(char*));
+                strcpy(par->arg[cnt- 1], token);
+                strcpy(par->dir, token);
+                // printf("this is parcom%s\n", par->com);
+                // printf("this is pararg%s\n", par->arg[cnt - 1]);
             }
 
             token = strtok(NULL, " ");
         }
-        
+        par->arg[cnt] = NULL;  
 }
 
-void mycd(char argument[512], char comline[512])
+void mycd(char argument[CMDLINE_MAX], char comline[CMDLINE_MAX])
 {
     
     if (chdir(argument) != 0)
@@ -55,13 +65,14 @@ void mycd(char argument[512], char comline[512])
 
 int main(void){
         struct myparse *p1 = (struct myparse *) malloc(sizeof(struct myparse));
-        
         char cmd[CMDLINE_MAX];
-
-        while (1) {
+        p1->arg = (char**) malloc(sizeof(char*) * (ARGS_LIMIT));
+        while (1) { 
                 char *nl;
                 int retval;
-
+                
+                for(unsigned i = 0; i < ARGS_LIMIT; i++)
+                    p1->arg[i] = (char*) malloc(sizeof(char) * (CMDLINE_MAX));
                 /* Print prompt */
                 printf("sshell@ucd$ ");
                 fflush(stdout);
@@ -82,18 +93,24 @@ int main(void){
 
                 /* Builtin command */
                 if (!strcmp(cmd, "exit")) {
+                        for(unsigned i = 0; i < ARGS_LIMIT ; i++)
+                            free(p1->arg[i]);
                         fprintf(stderr, "Bye...\n");
                         break;
                 }
-                myfunc(p1, cmd);
-                printf("p1com %s\n", p1->com);
+                strcpy(p1->firstcmd, cmd);
+                parser(p1, cmd);
                 if (!strcmp(p1->com, "cd")){
-                        mycd(p1->arg, p1->com);
+                        for(unsigned i = 0; i < ARGS_LIMIT ; i++)
+                            free(p1->arg[i]);
+                        mycd(p1->dir, p1->com);
                         continue;
                 }
                 /* Regular command */
                 pid_t pid = fork();
                 /*char *args[] = {cmd, NULL};*/
+
+
                 
                 if (pid == 0) {
                 /* Child */
@@ -111,8 +128,16 @@ int main(void){
                 }
                 // retval = system(cmd);
                 fprintf(stderr, "+ completed '%s' [%d]\n",
-                        cmd, retval);
-        }
-
+                        p1->firstcmd, retval);
+                // free(p1);
+                
+                for(unsigned i = 0; i < ARGS_LIMIT ; i++)
+                    free(p1->arg[i]);
+            }
+            free(p1->arg);
+            // free(p1->com);
+            // free(p1->dir);
+            free(p1);        
+                
         return EXIT_SUCCESS;
 }
