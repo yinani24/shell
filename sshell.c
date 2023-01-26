@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
+#include <fcntl.h>
 
 #define CMDLINE_MAX 512
 #define ARGS_LIMIT 16
@@ -13,7 +15,18 @@ struct myparse{
     char com[CMDLINE_MAX]; 
     char dir[CMDLINE_MAX];
     char firstcmd[CMDLINE_MAX];
+    char file[CMDLINE_MAX];
+    int do_caret;
 };
+
+void secondtokenparser(struct myparse * par, char secondtoken[CMDLINE_MAX]){
+        char *strtoken = strtok(secondtoken, " ");
+        while(strtoken != NULL){
+                printf("Strtoken: %s\n",strtoken);
+                strcpy(par->file, strtoken);
+                strtoken = strtok(NULL, " ");
+        }
+}
 
 void parser(struct myparse *par, char command[CMDLINE_MAX]){
         char *token = strtok(command, " ");
@@ -22,6 +35,7 @@ void parser(struct myparse *par, char command[CMDLINE_MAX]){
         {
             cnt++;
             // printf("%s\n", token);
+
             if (cnt == 1)
             {   
                 strcpy(par->com, token);
@@ -49,6 +63,39 @@ void parser(struct myparse *par, char command[CMDLINE_MAX]){
         par->arg[cnt] = NULL;  
 }
 
+void caret_parser(struct myparse * par, char command[CMDLINE_MAX]){
+        // printf("Aaad");
+        par->do_caret = 0;
+        if(strchr(command,'>') != NULL){
+                // printf("ADA\n");
+                par->do_caret = 1;
+        }
+        printf("Cmd: %s\n", command);
+        char *strtoken = strtok(command, ">");         
+        char first_token[CMDLINE_MAX];
+        int count = 0;
+        while(strtoken != NULL){
+               // ++count;
+               printf("STE: %s\n", strtoken);
+               printf("Cmd1: %s\n", command);
+                if(count == 0){
+                        strcpy(first_token,strtoken);
+                        parser(par, first_token);
+                }
+                else{
+                        secondtokenparser(par, strtoken);
+                }
+                printf("STE: %s\n", strtoken);
+                strtoken = strtok(NULL, ">");
+                printf("STE: %s\n", strtoken);
+                ++count;
+        }
+        // return first_token;
+}
+
+
+
+
 void mycd(char argument[CMDLINE_MAX], char comline[CMDLINE_MAX])
 {
     
@@ -70,7 +117,8 @@ int main(void){
         while (1) { 
                 char *nl;
                 int retval;
-                
+                int fd;
+                // char firtok[CMDLINE_MAX];
                 for(unsigned i = 0; i < ARGS_LIMIT; i++)
                     p1->arg[i] = (char*) malloc(sizeof(char) * (CMDLINE_MAX));
                 /* Print prompt */
@@ -99,7 +147,8 @@ int main(void){
                         break;
                 }
                 strcpy(p1->firstcmd, cmd);
-                parser(p1, cmd);
+                // strcpy(firtok,caret_parser(p1, cmd));
+                caret_parser(p1, cmd);
                 if (!strcmp(p1->com, "cd")){
                         for(unsigned i = 0; i < ARGS_LIMIT ; i++)
                             free(p1->arg[i]);
@@ -109,11 +158,17 @@ int main(void){
                 /* Regular command */
                 pid_t pid = fork();
                 /*char *args[] = {cmd, NULL};*/
-
-
+                
+                        
                 
                 if (pid == 0) {
                 /* Child */
+                    if(p1->do_caret){
+                        //printf("%s\n", p1->file);
+                        fd = open(p1->file, O_WRONLY | O_CREAT, 0644);
+                        dup2(fd, STDOUT_FILENO);
+                        close(fd);
+                    }
                     execvp(p1->com,p1->arg);
                     perror("execv");
                     exit(1);
@@ -130,7 +185,7 @@ int main(void){
                 fprintf(stderr, "+ completed '%s' [%d]\n",
                         p1->firstcmd, retval);
                 // free(p1);
-                
+
                 for(unsigned i = 0; i < ARGS_LIMIT ; i++)
                     free(p1->arg[i]);
             }
