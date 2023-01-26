@@ -70,26 +70,23 @@ void caret_parser(struct myparse * par, char command[CMDLINE_MAX]){
                 // printf("ADA\n");
                 par->do_caret = 1;
         }
-        printf("Cmd: %s\n", command);
+        //printf("Cmd: %s\n", command);
         char *strtoken = strtok(command, ">");         
         char first_token[CMDLINE_MAX];
         int count = 0;
+
         while(strtoken != NULL){
-               // ++count;
-               printf("STE: %s\n", strtoken);
-               printf("Cmd1: %s\n", command);
                 if(count == 0){
                         strcpy(first_token,strtoken);
-                        parser(par, first_token);
+                        
                 }
                 else{
                         secondtokenparser(par, strtoken);
                 }
-                printf("STE: %s\n", strtoken);
                 strtoken = strtok(NULL, ">");
-                printf("STE: %s\n", strtoken);
                 ++count;
         }
+        parser(par, first_token);
         // return first_token;
 }
 
