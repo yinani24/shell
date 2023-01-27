@@ -194,12 +194,13 @@ int main(void){
 
                 pipeparser(p, cmd, count_pipes);
 
+                
                 if(count_pipes){
-                        pipe(n_pipes);
-                    }
+                    pipe(n_pipes);
+                }  
 
                 for(int q = 0; q <= count_pipes; q++){  
-
+                     
                     if (!strcmp(p[q].com, "cd")){
                         mycd(p[q].dir, p[q].com);
                         // for(int i = 0; i <= count_pipes ; i++){
@@ -221,84 +222,135 @@ int main(void){
                             dup2(fd, STDOUT_FILENO);
                             close(fd);
                         }
-                        if(count_pipes){
-                        //     close(fd);
-                            if(count_pipes == 3){
-                                if(q == 0){
-                                        close(n_pipes[0]);
-                                        dup2(n_pipes[1], STDOUT_FILENO);
-                                        close(n_pipes[1]);
-                                }
-                                else if(q == count_pipes){
-                                        close(n_pipes[1]);
-                                        dup2(n_pipes[0], STDIN_FILENO);
-                                        close(n_pipes[0]);  
-                                }
-                                else if(q == 1){
-                                
-                                        // close(n_pipes[1]);
-                                        dup2(n_pipes[0], STDIN_FILENO);
-                                        close(n_pipes[0]);
-                                        dup2(n_pipes[1], STDOUT_FILENO);
-                                        close(n_pipes[1]);
-           
-                                }
-                                else if(q == 2){
-                                
-                                        // close(n_pipes[1]);
-                                        dup2(n_pipes[1], STDOUT_FILENO);
-                                        close(n_pipes[1]);
-                                        dup2(n_pipes[0], STDIN_FILENO);
-                                        close(n_pipes[0]);
-           
-                                }
-
-                            }
-                        else{
-                                if(q == 0){
-                                        close(n_pipes[0]);
-                                        dup2(n_pipes[1], STDOUT_FILENO);
-                                        close(n_pipes[1]);
-                                }
-                                else if(q == count_pipes){
-                                        close(n_pipes[1]);
-                                        dup2(n_pipes[0], STDIN_FILENO);
-                                        close(n_pipes[0]);  
-                                }
-                                else{
-                                
-                                        close(n_pipes[1]);
-                                        dup2(n_pipes[0], STDIN_FILENO);
-                                        close(n_pipes[0]);
-                                        dup2(n_pipes[1], STDOUT_FILENO);
-                                        close(n_pipes[1]);
-           
-                                }
-
-                        }
-                            
-
                         // if(count_pipes){
                         //     close(fd);
-                        //     if(q == 0){
-                        //         close(n_pipes[0]);
-                        //         dup2(n_pipes[1], STDOUT_FILENO);
-                        //         close(n_pipes[1]);
-                        //     }
-                        //     else if(q == count_pipes){
-                        //         close(n_pipes[1]);
-                        //         dup2(n_pipes[0], STDIN_FILENO);
-                        //         close(n_pipes[0]);  
-                        //     }
-                        //     else{
+                        //     if(count_pipes == 3){
+                        //         if(q == 0){
+                        //                 close(n_pipes[0]);
+                        //                 dup2(n_pipes[1], STDOUT_FILENO);
+                        //                 close(n_pipes[1]);
+                        //         }
+                        //         else if(q == count_pipes){
+                        //                 close(n_pipes[1]);
+                        //                 dup2(n_pipes[0], STDIN_FILENO);
+                        //                 close(n_pipes[0]);  
+                        //         }
+                        //         else if(q == 1){
                                 
-                        //         // close(n_pipes[1]);
-                        //         dup2(n_pipes[0], STDIN_FILENO);
-                        //         close(n_pipes[0]);
-                        //         dup2(n_pipes[1], STDOUT_FILENO);
-                        //         close(n_pipes[1]);
+                        //                 // close(n_pipes[1]);
+                        //                 dup2(n_pipes[0], STDIN_FILENO);
+                        //                 close(n_pipes[0]);
+                        //                 dup2(n_pipes[1], STDOUT_FILENO);
+                        //                 close(n_pipes[1]);
            
+                        //         }
+                        //         else if(q == 2){
+                                
+                        //                 // close(n_pipes[1]);
+                        //                 dup2(n_pipes[1], STDOUT_FILENO);
+                        //                 close(n_pipes[1]);
+                        //                 dup2(n_pipes[0], STDIN_FILENO);
+                        //                 close(n_pipes[0]);
+           
+                        //         }
+
                         //     }
+                        // else{
+                        //         if(q == 0){
+                        //                 close(n_pipes[0]);
+                        //                 dup2(n_pipes[1], STDOUT_FILENO);
+                        //                 close(n_pipes[1]);
+                        //         }
+                        //         else if(q == count_pipes){
+                        //                 close(n_pipes[1]);
+                        //                 dup2(n_pipes[0], STDIN_FILENO);
+                        //                 close(n_pipes[0]);  
+                        //         }
+                        //         else{
+                                
+                        //                 // close(n_pipes[1]);
+                        //                 dup2(n_pipes[0], STDIN_FILENO);
+                        //                 close(n_pipes[0]);
+                        //                 dup2(n_pipes[1], STDOUT_FILENO);
+                        //                 close(n_pipes[1]);
+           
+                        //         }
+
+                        // }
+                            
+
+                        if(count_pipes){
+                            // if(count_pipes > 1){
+                            //     pipe(n_pipes);
+
+                            // } 
+                            // if (fork() == 0) {
+                            
+                            //     close(n_pipes[0]);
+                            //     dup2(n_pipes[1], STDOUT_FILENO);
+                            //     close(n_pipes[1]);
+
+                            // }
+
+                            // if (fork() == 0) {
+                            //     close(n_pipes[1]);
+                            //     dup2(n_pipes[0], STDIN_FILENO);
+                            //     close(n_pipes[0]); 
+                            //     pipe(n_pipes);
+                            //     close(n_pipes[0]);
+                            //     dup2(n_pipes[1], STDOUT_FILENO);
+                            //     close(n_pipes[1]);
+                            // // I'm the second child and I'm gonna do some stuff
+                            // }
+
+                            // if (fork() == 0) {
+                            //     close(n_pipes[1]);
+                            //     dup2(n_pipes[0], STDIN_FILENO);
+                            //     close(n_pipes[1]); 
+                            // // I'm the second child and I'm gonna do some stuff
+                            // }
+
+
+                            // close(fd);
+                            /* Working Kode*/
+                            if(q == 0){
+                                close(n_pipes[0]);
+                                dup2(n_pipes[1], STDOUT_FILENO);
+                                close(n_pipes[1]);
+                            }
+                            else if(q == count_pipes){
+                                // if(count_pipes > 1){
+                                //     pipe(n_pipes);
+
+                                // } 
+                                close(n_pipes[1]);
+                                dup2(n_pipes[0], STDIN_FILENO);
+                                close(n_pipes[0]);  
+                            }
+                            else{
+                                close(n_pipes[1]);
+                                dup2(n_pipes[0], STDIN_FILENO);
+                                close(n_pipes[0]);
+                                pipe(n_pipes);
+                                close(n_pipes[0]);
+                                dup2(n_pipes[1], STDOUT_FILENO);
+                                close(n_pipes[1]);
+                                // if(fork() == 0){
+                                    
+                                // }
+                                // close(n_pipes[0]);
+                                // close(n_pipes[1]);
+                                
+                                
+
+                                // close(n_pipes[1]);
+                                // pipe(n_pipes);
+                                // dup2(n_pipes[0], STDIN_FILENO);
+                                // close(n_pipes[0]);
+                                // dup2(n_pipes[1], STDOUT_FILENO);
+                                // close(n_pipes[1]);
+           
+                            }
                         }
                         
                         execvp(p[q].com,p[q].arg);
@@ -310,6 +362,7 @@ int main(void){
                     } 
                     else if (pid > 0) {
                     /* Parent */
+                        
                         
                         
                         
@@ -343,16 +396,17 @@ int main(void){
                         perror("fork");
                         exit(1);
                     }
-                    st_pid[q] = pid; 
+                    st_pid[q] = pid;
+                     
                     
                     //     st_status[q] = wait(&status);
                     // waitpid(pid, &retval, 0)
                    //execvp(p[q + 1].com,p[q + 1].arg);
                 }
-                if(count_pipes){
-                        close(n_pipes[0]);
-                        close(n_pipes[1]);
-                }
+                // if(count_pipes){
+                //         close(n_pipes[0]);
+                //         close(n_pipes[1]);
+                // }
                 // close(n_pipes[1]);
                 // close(n_pipes[0]);
                 
