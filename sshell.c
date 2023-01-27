@@ -361,6 +361,10 @@ int main(void){
         struct myparse p[4];
         char cmd[CMDLINE_MAX];
         char copy_cmd[CMDLINE_MAX];
+        int st_pid[4];
+        int status;
+        // int st_status[4]; 
+
         
         while (1) { 
                 char *nl;
@@ -418,14 +422,12 @@ int main(void){
                 }
 
                 pipeparser(p, cmd, count_pipes);
-                
 
-                for(int q = 0; q <= count_pipes; q++){
-                
-                    if(count_pipes){
+                if(count_pipes){
                         pipe(n_pipes);
                     }
 
+                for(int q = 0; q <= count_pipes; q++){  
 
                     if (!strcmp(p[q].com, "cd")){
                         mycd(p[q].dir, p[q].com);
@@ -476,11 +478,12 @@ int main(void){
                         // execvp(p[q].com,p[q].arg);
                         perror("Error");
                         exit(1);
+                        
                     
                     } 
                     else if (pid > 0) {
                     /* Parent */
-                        //waitpid(pid, &retval, 0);
+                        
                         // if(count_pipes){
                         //     if(q == 0){
                         //         close(n_pipes[1]);
@@ -511,12 +514,25 @@ int main(void){
                         perror("fork");
                         exit(1);
                     }
-                    // waitpid(pid, &retval, 0);
-                    //execvp(p[q + 1].com,p[q + 1].arg);
+                    st_pid[q] = pid;
                     
+                    
+                    //     st_status[q] = wait(&status);
+                    // waitpid(pid, &retval, 0)
+                   //execvp(p[q + 1].com,p[q + 1].arg);
+                }
+                if(count_pipes){
+                        close(n_pipes[0]);
+                        close(n_pipes[1]);
+                }
+                // close(n_pipes[1]);
+                // close(n_pipes[0]);
+                
+                for(int i = 0; i <= count_pipes; i++){
+                        waitpid(st_pid[i], &status, 0);
 
                 }
-                wait(NULL);
+                
 
                 fprintf(stderr, "+ completed '%s' [%d]\n",
                         copy_cmd, 0);
