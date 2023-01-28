@@ -148,9 +148,10 @@ int main(void){
     char copy_cmd[CMDLINE_MAX];
     char sleep_cmd[CMDLINE_MAX];
     int st_pid[4];
+    int status;
     int slc = 0;
     int h = 0;
-    int status[4]; 
+    // int st_status[4]; 
 
     while (1) { 
         char *nl;
@@ -295,13 +296,13 @@ int main(void){
         for(int i = 0; i <= count_pipes; i++){
             if(sleep == 1){
                 slc = 1;
-                waitpid(-1, &(status[i]), WNOHANG);
+                waitpid(-1, &status, WNOHANG);
                 strcpy(sleep_cmd,copy_cmd);
-                h = status[i];
+                h = status;
                 j++;
             }
             else{
-                waitpid(st_pid[i], &status[i], 0);
+                waitpid(st_pid[i], &status, 0);
             }   
         }
         
@@ -315,11 +316,8 @@ int main(void){
         }
 
         fprintf(stderr, "+ completed '%s' ", copy_cmd);
-        for(int e = 0; e <= count_pipes; e++){
-            fprintf(stderr, "[%d]", status[e]);
-        }
-        printf("\n");
 
+        
 
         for(int i = 0; i <= count_pipes ; i++){
             for(int j = 0; j < ARGS_LIMIT; j++)
