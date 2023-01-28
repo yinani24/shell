@@ -179,13 +179,12 @@ int main(void){
         if (nl)
                 *nl = '\0';
         
-        strcpy(copy_cmd, cmd);
 
         /* Builtin command */
         if (!strcmp(cmd, "exit")) {
             fprintf(stderr, "Bye...\n");
-            // fprintf(stderr, "+ completed '%s' [%d]\n",
-            //     copy_cmd, 0);
+            fprintf(stderr, "+ completed '%s' [%d]\n",
+                cmd, 0);
             break;
         }
 
