@@ -141,6 +141,19 @@ void mycd(char argument[CMDLINE_MAX])
 
 }
 
+int checker(char argument[CMDLINE_MAX]){
+
+    char *strtoken = strtok(argument, " ");
+    int count = 0;
+    while(strtoken != NULL){
+        count++; 
+        strtoken = strtok(NULL, " ");
+    }
+
+    return count;
+
+}
+
 int main(void){
         
     struct myparse p[4];
@@ -151,6 +164,7 @@ int main(void){
     int status;
     int slc = 0;
     int h = 0;
+    char error[CMDLINE_MAX];
     // int st_status[4]; 
 
     while (1) { 
@@ -176,9 +190,17 @@ int main(void){
         /* Remove trailing newline from command line */
         nl = strchr(cmd, '\n');
         
-        if (nl)
-                *nl = '\0';
+        if(nl)
+            *nl = '\0';
         
+        strcpy(error,cmd);
+
+        if(checker(error) > 16){
+            fprintf(stderr, "Error: too many process arguments\n");
+            continue;
+        }
+
+        /*creates an extra copy of the command*/
         strcpy(copy_cmd, cmd);
 
         /* Builtin command */
@@ -188,9 +210,6 @@ int main(void){
                 cmd, 0);
             break;
         }
-
-        /*creates an extra copy of the command*/
-        //strcpy(copy_cmd, cmd);
 
         /*counts the number of pipes*/
         for(unsigned i = 0; cmd[i] != '\0'; i++){
@@ -251,11 +270,11 @@ int main(void){
                         close(n_pipes[0]);  
                     }
                     else{
-                        // close(n_pipes[1]);
+                        close(n_pipes[1]);
                         dup2(n_pipes[0], STDIN_FILENO);
                         close(n_pipes[0]);
-                        // pipe(n_pipes);
-                        // close(n_pipes[0]);
+                        pipe(n_pipes);
+                        close(n_pipes[0]);
                         dup2(n_pipes[1], STDOUT_FILENO);
                         close(n_pipes[1]);
                     }
@@ -300,7 +319,7 @@ int main(void){
             }   
         }
         
-        /**/
+        /*for sleeping*/
         if(j == 1){
             continue;
         }
