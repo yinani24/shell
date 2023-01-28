@@ -162,6 +162,7 @@ int main(void){
     char sleep_cmd[CMDLINE_MAX];
     int st_pid[4];
     int status;
+    int or_status[4];
     int slc = 0;
     int h = 0;
     char error[CMDLINE_MAX];
@@ -315,7 +316,7 @@ int main(void){
                 j++;
             }
             else{
-                waitpid(st_pid[i], &status, 0);
+                waitpid(st_pid[i], &or_status[i], 0);
             }   
         }
         
@@ -327,8 +328,13 @@ int main(void){
             fprintf(stderr, "+ completed '%s' [%d]\n",sleep_cmd, h);
             slc = 0;
         }
-
-        fprintf(stderr, "+ completed '%s' [%d]\n", copy_cmd, status);
+        
+        fprintf(stderr, "+ completed '%s' ", copy_cmd);    
+        for(int e = 0; e <= count_pipes ; e++){
+            fprintf(stderr, "[%d]", or_status[e]);
+        }
+        fprintf(stderr, "\n");
+        
 
         for(int i = 0; i <= count_pipes ; i++){
             for(int j = 0; j < ARGS_LIMIT; j++)
