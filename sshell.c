@@ -250,10 +250,7 @@ int main(void){
                         close(n_pipes[0]);  
                     }
                     else{
-                        close(n_pipes[1]);
                         dup2(n_pipes[0], STDIN_FILENO);
-                        close(n_pipes[0]);
-                        pipe(n_pipes);
                         close(n_pipes[0]);
                         dup2(n_pipes[1], STDOUT_FILENO);
                         close(n_pipes[1]);
@@ -309,7 +306,7 @@ int main(void){
             slc = 0;
         }
 
-        fprintf(stderr, "+ completed '%s' ", copy_cmd);
+        fprintf(stderr, "+ completed '%s' [%d]", copy_cmd, status);
 
         
 
