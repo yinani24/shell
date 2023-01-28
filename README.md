@@ -112,7 +112,7 @@ loop. We make sure that we save the command so that we can print
 it whenever the termination occurs. In this way,we were able to
 complete this task.  
 
-# Programming Challenges Faced:
+## Programming Challenges Faced:
 We had hard time finding the parsing errors since C implementation 
 was confusing and tirseome for both of us. Then we had 
 difficulty understanding the concept behind piping since forking 
@@ -124,7 +124,7 @@ got messed up. We had to spend a considerable amount of time
 at the end to fix that. But we were able to overcome all 
 the challenges.
 
-# Personal Challenges Faced:
+## Personal Challenges Faced:
 We spent a lot of time working late at night to complete this assignment. 
 Due to this, our health was not at its best. However, 
 the topics covered in this project were very interesting 
