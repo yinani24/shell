@@ -185,12 +185,12 @@ int main(void){
         if (!strcmp(cmd, "exit")) {
             fprintf(stderr, "Bye...\n");
             fprintf(stderr, "+ completed '%s' [%d]\n",
-                copy_cmd, 0);
+                cmd, 0);
             break;
         }
 
         /*creates an extra copy of the command*/
-        strcpy(copy_cmd, cmd);
+        //strcpy(copy_cmd, cmd);
 
         /*counts the number of pipes*/
         for(unsigned i = 0; cmd[i] != '\0'; i++){
@@ -251,25 +251,19 @@ int main(void){
                         close(n_pipes[0]);  
                     }
                     else{
-                        close(n_pipes[1]);
+                        // close(n_pipes[1]);
                         dup2(n_pipes[0], STDIN_FILENO);
                         close(n_pipes[0]);
-                        pipe(n_pipes);
-                        close(n_pipes[0]);
+                        // pipe(n_pipes);
+                        // close(n_pipes[0]);
                         dup2(n_pipes[1], STDOUT_FILENO);
                         close(n_pipes[1]);
                     }
                 }
                 
                 
-                int execval = execvp(p[q].com,p[q].arg);
-                if(execval == -1){
-                    fprintf(stderr, "Error: command not found\n");
-                }
-                else{
-                    perror("Error");
-                }
-                
+                execvp(p[q].com,p[q].arg);
+                perror("Error");
                 exit(1);
 
             } 
