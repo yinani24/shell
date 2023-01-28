@@ -261,10 +261,10 @@ int main(void){
                     }
                 }
                 
-                if(execvp(p[q].com,p[q].arg) == -1){
-                    fprintf(stderr, "Error: command not found\n");
-                }
+                execvp(p[q].com,p[q].arg);
+                // fprintf(stderr, "Error: command not found\n");
                 perror("Error");
+                
                 exit(1);
 
             } 
